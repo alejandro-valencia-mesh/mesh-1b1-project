@@ -42,42 +42,11 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       );
 
-    // const responseConfig = await fetch(
-    //   "https://integration-api.meshconnect.com/api/v1/transfers/managed/configure",
-    //   {
-    //     method: "POST",
-    //     headers: {
-    //       "X-Client-Secret": apiKey,
-    //       "X-Client-Id": clientId,
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       fromAuthToken: authToken,
-    //       fromType: fromType,
-    //       toAddresses: [
-    //         {
-    //           address: toAddress,
-    //           networkId: networkId,
-    //           symbol: symbol,
-    //         },
-    //       ],
-    //       symbol: symbol,
-    //       amountInFiat: amountInFiat,
-    //       networkId: networkId,
-    //     }),
-    //   }
-    // )
-    //   .then((response) => response.json())
-    //   .then((response) => response)
-    //   .catch(() => null);
-
     const mfaCode: any = {};
 
     if (typeof mfa === "string" && mfa.length > 0) {
       mfaCode["mfaCode"] = mfa;
     }
-
-    console.log("MFA CODE", mfaCode);
 
     const previewResponse = await fetch(
       "https://integration-api.meshconnect.com/api/v1/transfers/managed/preview",

@@ -45,7 +45,7 @@ export default function Main() {
         )}
         <div className="flex flex-row justify-center items-start gap-4 container m-auto">
           <Wallet name="Coinbase" />
-          <Wallet name="Binance" />
+          <Wallet name="Rainbow" />
         </div>
       </div>
     </div>

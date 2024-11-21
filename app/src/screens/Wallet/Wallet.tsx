@@ -1,6 +1,7 @@
 import { LinkContext, MainContext } from "@/app/src/components";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { IconSend } from "@tabler/icons-react";
+import { AssetsResponse } from "@/app/api/assets/route";
 
 const formatUSD = (amount: number) => {
   return new Intl.NumberFormat("en-US", {
@@ -37,18 +38,20 @@ export default function Wallet({ name }: any) {
       const getAssets = async () => {
         const token = wallets[name].accountTokens[0].accessToken;
         const type = wallets[name].brokerType;
-        const response = await fetch(`/api/assets?type=${type}`, {
-          method: "GET",
-          headers: {
-            "X-Auth-Token": token,
-          },
-        }).then((res) => res.json());
-        const assets = response?.content?.cryptocurrencyPositions;
-        if (!assets) {
+        const response: AssetsResponse = await fetch(
+          `/api/assets?type=${type}`,
+          {
+            method: "GET",
+            headers: {
+              "X-Auth-Token": token,
+            },
+          }
+        ).then((res) => res.json());
+        if (!response.assets) {
           setWallet(name, { assets: [] });
           return;
         }
-        setWallet(name, { assets });
+        setWallet(name, { assets: response.assets });
       };
 
       getAssets();
@@ -196,7 +199,7 @@ export default function Wallet({ name }: any) {
 
     return (
       <div className="w-full p-4 pb-0">
-        {walletConnected.assets.map((asset: any) => (
+        {(walletConnected.assets as AssetsResponse["assets"]).map((asset) => (
           <div
             className="w-full border border-slate-500 rounded mb-4 shadow bg-slate-600 flex flex-row items-center justify-center"
             key={asset.symbol}
@@ -207,8 +210,12 @@ export default function Wallet({ name }: any) {
                 <div>{asset.amount}</div>
               </div>
               <div className="flex flex-row justify-between text-slate-400 p-4 pt-0">
-                <div>{formatUSD(parseFloat(asset.lastPrice))}</div>
-                <div>{formatUSD(parseFloat(asset.marketValue))}</div>
+                {asset.lastPrice && (
+                  <div>{formatUSD(parseFloat(`${asset.lastPrice}`))}</div>
+                )}
+                {asset.marketValue && (
+                  <div>{formatUSD(parseFloat(`${asset.marketValue}`))}</div>
+                )}
               </div>
               <div className="flex flex-row justify-between text-slate-400 p-2 border-t border-t-slate-500">
                 <input
